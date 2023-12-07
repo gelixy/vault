@@ -8,6 +8,7 @@ import (
 
 type Vault struct {
 	Location string
+	readOnly bool
 }
 
 var DefaultLocation string = "/opt/gelixy/vault"
@@ -25,6 +26,19 @@ func Build(location ...string) (*Vault, error) {
 
 	return &Vault{
 		Location: baseLocation,
+		readOnly: false,
+	}, nil
+}
+
+func Attach(location ...string) (*Vault, error) {
+	baseLocation := DefaultLocation
+	if len(location) > 0 {
+		baseLocation = path.Join(location...)
+	}
+
+	return &Vault{
+		Location: baseLocation,
+		readOnly: true,
 	}, nil
 }
 
@@ -37,5 +51,5 @@ func (vault *Vault) NewSimpleSpace(pathParts []string) (VaultSpace, error) {
 		return nil, err
 	}
 
-	return NewSimpleSpace(spaceId)
+	return NewSimpleSpace(spaceId, vault.readOnly)
 }

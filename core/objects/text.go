@@ -10,29 +10,31 @@ import (
 
 type TextObject struct {
 	Id   string
+	Name string
 	file *os.File
 }
 
-func NewTextObject(spaceId string, nameConstructors ...ObjectNameConstructor) VaultObject {
+func NewTextObject(spaceId string, nameConstructors ...ObjectNameConstructor) (VaultObject, error) {
 	if len(nameConstructors) == 0 {
 		nameConstructors = []ObjectNameConstructor{
 			NewDateTimeNameConstructor(),
 		}
 	}
 
-	fileName := ""
-	for _, constructor := range nameConstructors {
-		fileName += constructor.GetObjectFullName()
+	name := MergeConstructors(nameConstructors...)
+
+	id := path.Join(spaceId, name)
+
+	file, err := os.Create(id)
+	if err != nil {
+		return nil, err
 	}
-
-	id := path.Join(spaceId, fileName)
-
-	file, _ := os.Create(id)
 
 	return &TextObject{
 		Id:   id,
+		Name: name,
 		file: file,
-	}
+	}, nil
 }
 
 func (text *TextObject) Write(data ...string) error {
@@ -55,6 +57,14 @@ func (text *TextObject) Write(data ...string) error {
 	}
 
 	return nil
+}
+
+func (text *TextObject) GetName() string {
+	return text.Name
+}
+
+func (text *TextObject) GetFullName() string {
+	return text.Id
 }
 
 func (text *TextObject) Finalize() {
