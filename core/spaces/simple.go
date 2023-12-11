@@ -8,9 +8,10 @@ import (
 )
 
 type SimpleVaultSpace struct {
-	Id       string
-	object   VaultObject
-	readOnly bool
+	Id                     string
+	DefaultNameConstructor ObjectNameConstructor
+	object                 VaultObject
+	readOnly               bool
 }
 
 func NewSimpleSpace(spaceId string, readOnly bool) (VaultSpace, error) {
@@ -25,7 +26,12 @@ func (space *SimpleVaultSpace) CreateObject(objectType VaultObjectType, nameCons
 }
 
 func (space *SimpleVaultSpace) newTextObject(nameConstructors ...ObjectNameConstructor) (VaultObject, error) {
-	textObject, err := NewTextObject(space.Id, nameConstructors...)
+	constructors := []ObjectNameConstructor{space.DefaultNameConstructor}
+	if len(nameConstructors) != 0 {
+		constructors = nameConstructors
+	}
+
+	textObject, err := NewTextObject(space.Id, constructors...)
 	if err != nil {
 		return nil, err
 	}
