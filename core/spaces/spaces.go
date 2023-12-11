@@ -6,7 +6,8 @@ import (
 )
 
 type VaultSpace interface {
-	CreateObject(VaultObjectType, ...ObjectNameConstructor) (VaultObject, error)
+	NewObject(VaultObjectType, ...ObjectNameConstructor) (VaultObject, error)
+	NewDefaultObject(...ObjectNameConstructor) (VaultObject, error)
 	Object() VaultObject
 	Objects() map[string]VaultObject
 	List() ([]VaultObject, error)

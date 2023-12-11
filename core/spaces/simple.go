@@ -1,6 +1,7 @@
 package spaces
 
 import (
+	"errors"
 	"os"
 
 	. "github.com/gelixy/vault/core/names"
@@ -10,6 +11,7 @@ import (
 type SimpleVaultSpace struct {
 	Id                     string
 	DefaultNameConstructor ObjectNameConstructor
+	DefaultObjectType      VaultObjectType
 	object                 VaultObject
 	readOnly               bool
 }
@@ -21,8 +23,16 @@ func NewSimpleSpace(spaceId string, readOnly bool) (VaultSpace, error) {
 	}, nil
 }
 
-func (space *SimpleVaultSpace) CreateObject(objectType VaultObjectType, nameConstructors ...ObjectNameConstructor) (VaultObject, error) {
-	return space.newTextObject(nameConstructors...)
+func (space *SimpleVaultSpace) NewObject(objectType VaultObjectType, nameConstructors ...ObjectNameConstructor) (VaultObject, error) {
+	switch objectType {
+	case TextObjectType:
+		return space.newTextObject(nameConstructors...)
+	}
+	return nil, errors.New("unknown object type")
+}
+
+func (space *SimpleVaultSpace) NewDefaultObject(nameConstructors ...ObjectNameConstructor) (VaultObject, error) {
+	return space.NewObject(space.DefaultObjectType, nameConstructors...)
 }
 
 func (space *SimpleVaultSpace) newTextObject(nameConstructors ...ObjectNameConstructor) (VaultObject, error) {
