@@ -3,7 +3,8 @@ package core
 import (
 	"os"
 	"path"
-	. "vault/core/spaces"
+
+	. "github.com/gelixy/vault/core/spaces"
 )
 
 type Vault struct {

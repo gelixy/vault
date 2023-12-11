@@ -2,8 +2,9 @@ package spaces
 
 import (
 	"os"
-	. "vault/core/names"
-	. "vault/core/objects"
+
+	. "github.com/gelixy/vault/core/names"
+	. "github.com/gelixy/vault/core/objects"
 )
 
 type SimpleVaultSpace struct {

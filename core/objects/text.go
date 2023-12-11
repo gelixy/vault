@@ -5,7 +5,8 @@ import (
 	"os"
 	"path"
 	"time"
-	. "vault/core/names"
+
+	. "github.com/gelixy/vault/core/names"
 )
 
 type TextObject struct {
