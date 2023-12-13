@@ -6,7 +6,6 @@ type dateTimeNameConstructor struct {
 	prefix    string
 	suffix    string
 	extension string
-	middle    string
 }
 
 func NewDateTimeNameConstructor() ObjectNameConstructor {
@@ -29,8 +28,6 @@ func (constructor *dateTimeNameConstructor) Extension(name string) ObjectNameCon
 }
 
 func (constructor *dateTimeNameConstructor) GetObjectFullName() string {
-	if constructor.middle == "" {
-		constructor.middle = time.Now().UTC().Format(time.RFC3339)
-	}
-	return constructor.prefix + constructor.middle + constructor.suffix + "." + constructor.extension
+	middle := time.Now().UTC().Format(time.RFC3339)
+	return constructor.prefix + middle + constructor.suffix + "." + constructor.extension
 }
