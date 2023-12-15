@@ -4,6 +4,7 @@ import (
 	"errors"
 	"os"
 	"path"
+	"sync"
 	"time"
 
 	. "github.com/gelixy/vault/core/names"
@@ -13,6 +14,7 @@ type TextObject struct {
 	Id   string
 	Name string
 	file *os.File
+	wall sync.Mutex
 }
 
 func NewTextObject(spaceId string, nameConstructors ...ObjectNameConstructor) (VaultObject, error) {
@@ -39,6 +41,9 @@ func NewTextObject(spaceId string, nameConstructors ...ObjectNameConstructor) (V
 }
 
 func (text *TextObject) Write(data ...string) error {
+	text.wall.Lock()
+	defer text.wall.Unlock()
+
 	if text.file == nil {
 		return errors.New("object file is nil")
 	}
