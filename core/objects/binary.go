@@ -39,7 +39,7 @@ func NewBinaryObject(spaceId string, nameConstructors ...ObjectNameConstructor) 
 	}, nil
 }
 
-func (binary *BinaryObject) Write(data ...any) error {
+func (binary *BinaryObject) WriteBinary(data []byte) error {
 	binary.wall.Lock()
 	defer binary.wall.Unlock()
 
@@ -47,18 +47,15 @@ func (binary *BinaryObject) Write(data ...any) error {
 		return errors.New("object file is nil")
 	}
 
-	for _, oneStringPart := range data {
-		_, err := binary.file.Write(oneStringPart.([]byte))
-		if err != nil {
-			return err
-		}
-	}
-
-	_, err := binary.file.WriteString("\n")
+	_, err := binary.file.Write(data)
 	if err != nil {
 		return err
 	}
 
+	return nil
+}
+
+func (binary *BinaryObject) WriteText(data ...string) error {
 	return nil
 }
 

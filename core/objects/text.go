@@ -40,7 +40,7 @@ func NewTextObject(spaceId string, nameConstructors ...ObjectNameConstructor) (V
 	}, nil
 }
 
-func (text *TextObject) Write(data ...any) error {
+func (text *TextObject) WriteText(data ...string) error {
 	text.wall.Lock()
 	defer text.wall.Unlock()
 
@@ -51,7 +51,7 @@ func (text *TextObject) Write(data ...any) error {
 	text.file.WriteString(time.Now().UTC().Format(time.RFC3339) + " :: ")
 
 	for _, oneStringPart := range data {
-		_, err := text.file.WriteString(oneStringPart.(string) + " ")
+		_, err := text.file.WriteString(oneStringPart + " ")
 		if err != nil {
 			return err
 		}
@@ -62,6 +62,10 @@ func (text *TextObject) Write(data ...any) error {
 		return err
 	}
 
+	return nil
+}
+
+func (text *TextObject) WriteBinary(data []byte) error {
 	return nil
 }
 

@@ -10,6 +10,7 @@ var (
 type VaultObject interface {
 	GetName() string
 	GetFullName() string
-	Write(data ...any) error
+	WriteText(data ...string) error
+	WriteBinary(data []byte) error
 	Finalize()
 }
