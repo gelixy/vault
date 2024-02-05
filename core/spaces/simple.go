@@ -27,6 +27,8 @@ func (space *SimpleVaultSpace) NewObject(objectType VaultObjectType, nameConstru
 	switch objectType {
 	case TextObjectType:
 		return space.newTextObject(nameConstructors...)
+	case BinaryObjectType:
+		return space.newBinaryObject(nameConstructors...)
 	}
 	return nil, errors.New("unknown object type")
 }
@@ -42,6 +44,26 @@ func (space *SimpleVaultSpace) newTextObject(nameConstructors ...ObjectNameConst
 	}
 
 	textObject, err := NewTextObject(space.Id, constructors...)
+	if err != nil {
+		return nil, err
+	}
+
+	if space.object != nil {
+		space.object.Finalize()
+	}
+
+	space.object = textObject
+
+	return textObject, nil
+}
+
+func (space *SimpleVaultSpace) newBinaryObject(nameConstructors ...ObjectNameConstructor) (VaultObject, error) {
+	constructors := []ObjectNameConstructor{space.DefaultNameConstructor}
+	if len(nameConstructors) != 0 {
+		constructors = nameConstructors
+	}
+
+	textObject, err := NewBinaryObject(space.Id, constructors...)
 	if err != nil {
 		return nil, err
 	}
