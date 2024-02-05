@@ -5,19 +5,18 @@ import (
 	"os"
 	"path"
 	"sync"
-	"time"
 
 	. "github.com/gelixy/vault/core/names"
 )
 
-type TextObject struct {
+type BinaryObject struct {
 	Id   string
 	Name string
 	file *os.File
 	wall sync.Mutex
 }
 
-func NewTextObject(spaceId string, nameConstructors ...ObjectNameConstructor) (VaultObject, error) {
+func NewBinaryObject(spaceId string, nameConstructors ...ObjectNameConstructor) (VaultObject, error) {
 	if len(nameConstructors) == 0 {
 		nameConstructors = []ObjectNameConstructor{
 			NewDateTimeNameConstructor(),
@@ -33,31 +32,29 @@ func NewTextObject(spaceId string, nameConstructors ...ObjectNameConstructor) (V
 		return nil, err
 	}
 
-	return &TextObject{
+	return &BinaryObject{
 		Id:   id,
 		Name: name,
 		file: file,
 	}, nil
 }
 
-func (text *TextObject) Write(data ...any) error {
-	text.wall.Lock()
-	defer text.wall.Unlock()
+func (binary *BinaryObject) Write(data ...any) error {
+	binary.wall.Lock()
+	defer binary.wall.Unlock()
 
-	if text.file == nil {
+	if binary.file == nil {
 		return errors.New("object file is nil")
 	}
 
-	text.file.WriteString(time.Now().UTC().Format(time.RFC3339) + " :: ")
-
 	for _, oneStringPart := range data {
-		_, err := text.file.WriteString(oneStringPart.(string) + " ")
+		_, err := binary.file.Write(oneStringPart.([]byte))
 		if err != nil {
 			return err
 		}
 	}
 
-	_, err := text.file.WriteString("\n")
+	_, err := binary.file.WriteString("\n")
 	if err != nil {
 		return err
 	}
@@ -65,14 +62,14 @@ func (text *TextObject) Write(data ...any) error {
 	return nil
 }
 
-func (text *TextObject) GetName() string {
-	return text.Name
+func (binary *BinaryObject) GetName() string {
+	return binary.Name
 }
 
-func (text *TextObject) GetFullName() string {
-	return text.Id
+func (binary *BinaryObject) GetFullName() string {
+	return binary.Id
 }
 
-func (text *TextObject) Finalize() {
-	text.file.Close()
+func (binary *BinaryObject) Finalize() {
+	binary.file.Close()
 }

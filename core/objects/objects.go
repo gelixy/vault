@@ -10,6 +10,6 @@ var (
 type VaultObject interface {
 	GetName() string
 	GetFullName() string
-	Write(data ...string) error
+	Write(data ...any) error
 	Finalize()
 }
