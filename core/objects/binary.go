@@ -68,5 +68,6 @@ func (binary *BinaryObject) GetFullName() string {
 }
 
 func (binary *BinaryObject) Finalize() {
+	binary.file.Sync()
 	binary.file.Close()
 }

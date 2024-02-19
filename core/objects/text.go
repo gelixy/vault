@@ -78,5 +78,6 @@ func (text *TextObject) GetFullName() string {
 }
 
 func (text *TextObject) Finalize() {
+	text.file.Sync()
 	text.file.Close()
 }
